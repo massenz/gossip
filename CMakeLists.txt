@@ -23,7 +23,7 @@ ELSE (${COMMONS_FILE} STREQUAL NOTFOUND)
 ENDIF (${COMMONS_FILE} STREQUAL NOTFOUND)
 
 # Conan Packaging support
-include(.conan/conanbuildinfo.cmake)
+include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
 conan_basic_setup()
 
 set(RELEASE_STRING "${RELEASE_MAJOR}.${RELEASE_MINOR}.${RELEASE_PATCH}-${BUILD_ID}")
@@ -71,7 +71,10 @@ include_directories(
         ${INSTALL_DIR}/include
 )
 
-link_directories(${LIBMICROHTTPD_INSTALL}/lib)
+link_directories(
+        ${LIBMICROHTTPD_INSTALL}/lib
+        ${INSTALL_DIR}/lib
+)
 
 set(UTILS_SOURCES
         ${SOURCE_DIR}/utils/misc.cpp
