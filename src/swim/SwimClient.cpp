@@ -3,9 +3,10 @@
 
 
 
-#include <zmq.h>
+#include <zmq.hpp>
 #include <iostream>
-#include "../../include/swim/SwimClient.hpp"
+
+#include "swim/SwimClient.hpp"
 
 
 using namespace zmq;

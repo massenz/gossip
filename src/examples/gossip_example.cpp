@@ -20,7 +20,7 @@
 #include "swim/GossipFailureDetector.hpp"
 #include "apiserver/api/rest/ApiServer.hpp"
 
-#include "utils/ParseArgs.hpp"
+#include "distlib/utils/ParseArgs.hpp"
 
 
 using namespace std;

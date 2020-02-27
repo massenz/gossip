@@ -14,11 +14,11 @@
 
 #include "version.h"
 
-#include "../../include/utils/ParseArgs.hpp"
-#include "../../include/utils/utils.hpp"
+#include "distlib/utils/ParseArgs.hpp"
+#include "distlib/utils/utils.hpp"
 
-#include "../../include/swim/SwimClient.hpp"
-#include "../../include/swim/SwimServer.hpp"
+#include "swim/SwimClient.hpp"
+#include "swim/SwimServer.hpp"
 
 // TODO: find Posix equivalent of GNU `program_invocation_short_name`
 #ifdef __linux__

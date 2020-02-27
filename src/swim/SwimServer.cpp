@@ -1,8 +1,9 @@
 // Copyright (c) 2016 AlertAvert.com. All rights reserved.
 // Created by M. Massenzio (marco@alertavert.com) on 11/22/16.
 
+#include <zmq.hpp>
 
-#include "utils/utils.hpp"
+#include "distlib/utils/utils.hpp"
 #include "swim/SwimServer.hpp"
 
 

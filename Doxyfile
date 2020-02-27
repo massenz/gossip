@@ -6,11 +6,11 @@
 
 DOXYFILE_ENCODING      = UTF-8
 
-PROJECT_NAME = "distlib"
-PROJECT_NUMBER = "0.9.0"
-PROJECT_BRIEF = "Library of C++ utilities for Distributed Systems."
+PROJECT_NAME = "gossip"
+PROJECT_NUMBER = "1.0.1"
+PROJECT_BRIEF = "Gossip Protocol for distributed failure detectors (SWIM)"
 PROJECT_LOGO  = "docs/images/logo.png"
-OUTPUT_DIRECTORY = "/tmp/distlib"
+OUTPUT_DIRECTORY = "/tmp/gossip"
 
 CREATE_SUBDIRS = NO
 ALLOW_UNICODE_NAMES = NO

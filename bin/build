@@ -6,8 +6,9 @@ if [[ -n ${COMMON_UTILS_DIR} ]]; then
   UTILS="-DCOMMON_UTILS_DIR=${COMMON_UTILS_DIR}"
 fi
 
-if [[ -n ${LOCAL_INSTALL_DIR} ]]; then
-  INSTALL="-DINSTALL_DIR=${LOCAL_INSTALL_DIR}"
+if [[ -n ${INSTALL_DIR} ]]; then
+  INSTALL="-DINSTALL_DIR=${INSTALL_DIR}"
+  LIBMICROHTTPD_INSTALL="-DLIBMICROHTTPD_INSTALL=${INSTALL_DIR}/libmicrohttpd"
 fi
 
 
@@ -15,5 +16,9 @@ BUILD_DIR="$(dirname $0)/../build"
 mkdir -p ${BUILD_DIR}
 cd ${BUILD_DIR}
 
-cmake  -DCMAKE_CXX_COMPILER=$(which clang++) ${UTILS} ${INSTALL} ..
+cmake  -DCMAKE_CXX_COMPILER=$(which clang++) \
+    ${UTILS} \
+    ${INSTALL} \
+    ${LIBMICROHTTPD_INSTALL} \
+    ..
 cmake --build . --target all -- -j 6
