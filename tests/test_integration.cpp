@@ -11,8 +11,8 @@
 #include <SimpleHttpRequest.hpp>
 #include <google/protobuf/util/json_util.h>
 
-#include "../include/swim/SwimClient.hpp"
-#include "../include/swim/GossipFailureDetector.hpp"
+#include "swim/SwimClient.hpp"
+#include "swim/GossipFailureDetector.hpp"
 #include "apiserver/api/rest/ApiServer.hpp"
 
 #include "tests.h"

@@ -9,7 +9,7 @@
 .project
 .settings/
 .conan/
-docs/html/
+docs/apidocs/
 
 # CMake files
 CMakeCache.txt
@@ -21,11 +21,8 @@ gen/
 # Recommended build directory
 build/
 Debug/
-.conan/
 
 # Compiler intermediate files
 .o
 .so
 .la
-
-cmake-build-debug

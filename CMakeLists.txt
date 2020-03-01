@@ -1,9 +1,9 @@
 # This file (c) 2016-2017 AlertAvert.com.  All rights reserved.
 
 project(gossip)
-cmake_minimum_required(VERSION 3.4)
+cmake_minimum_required(VERSION 3.15)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14 -fPIC")
-
+cmake_policy(SET CMP0068 NEW)
 
 # Version number
 set(RELEASE_MAJOR 1)
@@ -121,7 +121,7 @@ add_library(gossip SHARED
 target_link_libraries(gossip ${SWIM_LIBS})
 
 
-if (NOT ${INSTALL_DIR})
+if (DEFINED INSTALL_DIR)
     message(STATUS "Installing shared libraries to ${INSTALL_DIR}/lib "
                    "and include files to ${INSTALL_DIR}/include/${PROJECT_NAME}")
     install(TARGETS gossip DESTINATION ${INSTALL_DIR}/lib)
@@ -137,10 +137,10 @@ if (NOT ${INSTALL_DIR})
     # Copy Proto headers to include folder.
     install(FILES ${PROTO_HDRS} DESTINATION ${INSTALL_DIR}/include/${PROJECT_NAME}/proto)
 
-else (NOT ${INSTALL_DIR})
+else ()
     message(FATAL_ERROR "INSTALL_DIR is not defined, files will not be installed."
                         " Use -DINSTALL_DIR=/path/to/install to enable")
-endif (NOT ${INSTALL_DIR})
+endif ()
 
 # Unit tests build is defined in the tests/ folder
 add_subdirectory(${TESTS_DIR})

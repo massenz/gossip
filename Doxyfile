@@ -10,7 +10,7 @@ PROJECT_NAME = "gossip"
 PROJECT_NUMBER = "1.0.1"
 PROJECT_BRIEF = "Gossip Protocol for distributed failure detectors (SWIM)"
 PROJECT_LOGO  = "docs/images/logo.png"
-OUTPUT_DIRECTORY = "/tmp/gossip"
+OUTPUT_DIRECTORY = "docs/apidocs"
 
 CREATE_SUBDIRS = NO
 ALLOW_UNICODE_NAMES = NO
