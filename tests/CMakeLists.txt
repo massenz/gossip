@@ -58,19 +58,17 @@ target_link_libraries(unit_tests
         distutils
 )
 
-# TODO: Enable integration tests, once the SimpleHttpRequest library is installed (see: #171562364)
-#
-#add_executable(integration_tests
-#        ${INTEGRATION_TESTS}
-#        tests.h
-#        all_tests.cpp
-#)
-#target_link_libraries(integration_tests
-#        ${GTEST}
-#        gossip
-#        http_parser
-#        uv
-#)
+add_executable(integration_tests
+        ${INTEGRATION_TESTS}
+        tests.h
+        all_tests.cpp
+)
+target_link_libraries(integration_tests
+        ${GTEST}
+        gossip
+        http_parser
+        uv
+)
 
 add_test(unit_tests ${CMAKE_CURRENT_BINARY_DIR}/unit_tests)
-#add_test(integration_tests ${CMAKE_CURRENT_BINARY_DIR}/integration_tests)
+add_test(integration_tests ${CMAKE_CURRENT_BINARY_DIR}/integration_tests)
