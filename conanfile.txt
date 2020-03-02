@@ -9,13 +9,15 @@ glog/0.4.0@bincrafters/stable
 gtest/1.8.0@bincrafters/stable
 OpenSSL/1.0.2@conan/stable
 protobuf/3.9.1@bincrafters/stable
-cppzmq/4.4.1@bincrafters/stable
 
+zeromq/4.3.2
+cppzmq/4.6.0
 
 [options]
 glog:with_gflags=False
 gtest:shared=False
-zmq:shared=True
+zeromq:shared=True
+#zeromq:encryption=None
 Protobuf:shared=True
 
 [generators]

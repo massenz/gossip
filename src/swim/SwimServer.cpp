@@ -1,9 +1,10 @@
 // Copyright (c) 2016 AlertAvert.com. All rights reserved.
 // Created by M. Massenzio (marco@alertavert.com) on 11/22/16.
 
+#include <zmq.hpp>
 
-#include "../../include/utils/utils.hpp"
-#include "../../include/swim/SwimServer.hpp"
+#include "distlib/utils/utils.hpp"
+#include "swim/SwimServer.hpp"
 
 
 using namespace zmq;
@@ -12,19 +13,26 @@ namespace swim {
 
 void SwimServer::start() {
 
+  VLOG(2) << "VLOG 1";
+  LOG(INFO) << "1";
   context_t ctx(kNumThreads);
   socket_t socket(ctx, ZMQ_REP);
   if (!socket) {
     LOG(ERROR) << "Could not initialize the socket, this is a critical error, aborting.";
     return;
   }
+  LOG(INFO) << "2";
 
   // No point in keeping the socket around when we exit.
   socket.setsockopt(ZMQ_LINGER, &kDefaultSocketLingerMsec, sizeof (unsigned int));
+  LOG(INFO) << "3";
+
   auto address = utils::SocketAddress(port_);
-  socket.bind(address.c_str());
+  VLOG(2) << "Binding Socket to: " << address << ":" << port_;
 
   LOG(INFO) << "Server listening on: " << address;
+  socket.bind(address.c_str());
+
 
   // Polling from socket, so stopping the server does not hang indefinitely in the absence of
   // incoming messages.

@@ -1,20 +1,18 @@
 # This file (c) 2016-2017 AlertAvert.com.  All rights reserved.
 
-project(distlib)
-cmake_minimum_required(VERSION 3.4)
+project(gossip)
+cmake_minimum_required(VERSION 3.15)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14 -fPIC")
+cmake_policy(SET CMP0068 NEW)
+
+# Version number
+set(RELEASE_MAJOR 1)
+set(RELEASE_MINOR 0)
+set(RELEASE_PATCH 1)
 
 
 # Include common cmake utilities:
 include(${COMMON_UTILS_DIR}/commons.cmake OPTIONAL RESULT_VARIABLE COMMONS_FILE)
-
-### Setting up common configuration variables
-
-# Version number
-set(RELEASE_MAJOR 0)
-set(RELEASE_MINOR 11)
-set(RELEASE_PATCH 0)
-
 IF (${COMMONS_FILE} STREQUAL NOTFOUND)
     message(WARNING "Not using CMake utilities")
     set(BUILD_ID 0)
@@ -22,8 +20,28 @@ ELSE (${COMMONS_FILE} STREQUAL NOTFOUND)
     get_build_id(BUILD_ID)
 ENDIF (${COMMONS_FILE} STREQUAL NOTFOUND)
 
+##
+#
+# Installation directory; this is both used to access
+# required libraries (microhttpd, distutils) as well as
+# to install the compiled artifacts.
+#
+# The INSTALL_DIR env variable must be set, unless -DINSTALL_DIR is used.
+if(NOT DEFINED INSTALL_DIR)
+    if(DEFINED ENV{INSTALL_DIR})
+        set(INSTALL_DIR $ENV{INSTALL_DIR})
+    else()
+        message(FATAL_ERROR
+                "INSTALL_DIR should be defined as an environment variable, or via -D notation")
+    endif()
+endif()
+
+if(NOT DEFINED LIBMICROHTTPD_INSTALL)
+    set(LIBMICROHTTPD_INSTALL ${INSTALL_DIR}/libmicrohttpd)
+endif()
+
 # Conan Packaging support
-include(.conan/conanbuildinfo.cmake)
+include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
 conan_basic_setup()
 
 set(RELEASE_STRING "${RELEASE_MAJOR}.${RELEASE_MINOR}.${RELEASE_PATCH}-${BUILD_ID}")
@@ -71,17 +89,9 @@ include_directories(
         ${INSTALL_DIR}/include
 )
 
-link_directories(${LIBMICROHTTPD_INSTALL}/lib)
-
-set(UTILS_SOURCES
-        ${SOURCE_DIR}/utils/misc.cpp
-        ${SOURCE_DIR}/utils/network.cpp
-)
-
-set(CONSISTENT_HASH_SOURCES
-        ${SOURCE_DIR}/ConsistentHash.cpp
-        ${SOURCE_DIR}/Bucket.cpp
-        ${SOURCE_DIR}/View.cpp
+link_directories(
+        ${LIBMICROHTTPD_INSTALL}/lib
+        ${INSTALL_DIR}/lib
 )
 
 set(SWIM_SOURCES
@@ -91,17 +101,12 @@ set(SWIM_SOURCES
 )
 
 set(SWIM_LIBS
+        distutils
         glog
         microhttpd
         protobuf
         pthread
         zmq
-)
-
-set(UTILS_LIBS
-        crypto
-        glog
-        pthread
 )
 
 ##
@@ -110,27 +115,16 @@ set(UTILS_LIBS
 # Shared (dynamic) library for the SWIM Gossip Protocol.
 #
 add_library(gossip SHARED
-        ${UTILS_SOURCES}
         ${SWIM_SOURCES}
         ${PROTO_SRCS}
 )
 target_link_libraries(gossip ${SWIM_LIBS})
 
-##
-# libdistutils.so
-#
-# Shared (dynamic) library for various Distributed facilities.
-#
-add_library(distutils SHARED
-        ${CONSISTENT_HASH_SOURCES}
-)
-target_link_libraries(distutils ${UTILS_LIBS})
 
-
-if (NOT ${INSTALL_DIR})
+if (DEFINED INSTALL_DIR)
     message(STATUS "Installing shared libraries to ${INSTALL_DIR}/lib "
                    "and include files to ${INSTALL_DIR}/include/${PROJECT_NAME}")
-    install(TARGETS gossip distutils DESTINATION ${INSTALL_DIR}/lib)
+    install(TARGETS gossip DESTINATION ${INSTALL_DIR}/lib)
 
     # Generated configuration file, containing version and build number.
     install(FILES ${PROJECT_BINARY_DIR}/version.h DESTINATION
@@ -143,10 +137,10 @@ if (NOT ${INSTALL_DIR})
     # Copy Proto headers to include folder.
     install(FILES ${PROTO_HDRS} DESTINATION ${INSTALL_DIR}/include/${PROJECT_NAME}/proto)
 
-else (NOT ${INSTALL_DIR})
-    message(WARNING "INSTALL_DIR is not defined, files will not be installed."
-                    " Use -DINSTALL_DIR=/path/to/install to enable")
-endif (NOT ${INSTALL_DIR})
+else ()
+    message(FATAL_ERROR "INSTALL_DIR is not defined, files will not be installed."
+                        " Use -DINSTALL_DIR=/path/to/install to enable")
+endif ()
 
 # Unit tests build is defined in the tests/ folder
 add_subdirectory(${TESTS_DIR})
@@ -158,15 +152,11 @@ add_subdirectory(${TESTS_DIR})
 set(EXAMPLES_DIR ${SOURCE_DIR}/examples)
 
 # Examples will use the latest build for the shared libraries
-link_directories(${CMAKE_BINARY_DIR}
-                 ${INSTALL_DIR}/lib
+link_directories(
+        ${CMAKE_BINARY_DIR}/lib
+        ${INSTALL_DIR}/lib
 )
 
-##
-# Merkle Tree Demo
-#
-add_executable(merkle_demo ${EXAMPLES_DIR}/merkle_demo.cpp)
-target_link_libraries(merkle_demo distutils ${UTILS_LIBS})
 
 ##
 # SWIM Server

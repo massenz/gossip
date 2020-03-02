@@ -1,12 +1,12 @@
 # This file (c) 2016-2017 AlertAvert.com.  All rights reserved.
 
-project(distlib_test)
+project(gossip_test)
 enable_testing()
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14 -fPIC")
 
 
 # Conan Packaging support
-include(../.conan/conanbuildinfo.cmake)
+include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
 conan_basic_setup()
 
 ###
@@ -14,7 +14,8 @@ conan_basic_setup()
 set(THIRD_PARTY ${CMAKE_SOURCE_DIR}/third_party)
 set(SIMPLE_HTTP ${THIRD_PARTY}/SimpleHttpRequest)
 
-include_directories(${SIMPLE_HTTP}/include
+include_directories(
+        ${SIMPLE_HTTP}/include
         ${SIMPLE_HTTP}/include/uv
 )
 link_directories(${SIMPLE_HTTP}/lib)
@@ -26,14 +27,8 @@ if (${GTEST} STREQUAL GTEST-NOTFOUND)
 endif (${GTEST} STREQUAL GTEST-NOTFOUND)
 
 set(UNIT_TESTS
-        ${TESTS_DIR}/test_consistent_hash.cpp
-        ${TESTS_DIR}/test_bucket.cpp
         ${TESTS_DIR}/test_gossip.cpp
-        ${TESTS_DIR}/test_merkle.cpp
-        ${TESTS_DIR}/test_parse_args.cpp
         ${TESTS_DIR}/test_swim_server.cpp
-        ${TESTS_DIR}/test_utils_network.cpp
-        ${TESTS_DIR}/test_view.cpp
 )
 
 # Add the build directory to the library search path
