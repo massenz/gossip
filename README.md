@@ -1,198 +1,75 @@
-# libdist - C++ utilities for Distributed Computing
+# Gossip Protocol for Fault Detectors
 
 
- distlib| 0.11.0
-:-------|---------------------------------:
-Author  | [M. Massenzio](https://www.linkedin.com/in/mmassenzio)
-Updated | 2017-11-02
+Project   | gossip
+:---      | ---:
+Author    | [M. Massenzio](https://bitbucket.org/marco)
+Repository| <https://bitbucket.org/marco/gossip>
+Release   | 0.11.0
+Updated   | 2020-02-26
 
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
-# Install & Build
+# SWIM Gossip and Consensus algorithm
 
-## Conan packages
+This project is a  reference implementation of a failure detector based on the [SWIM Gossip protocol](SWIM); the project creates a shared library `libgossip` for use in your own system; a demo implementation is provided in the [`gossip_example`](src/examples/gossip_example.cpp) server.
 
-To build the project, you need to first donwload/build the necessary binary dependencies, as
-listed in `conanfile.text`.
-
-This is done as follows:
-
-```bash
-sudo -H pip install -U conan
-mkdir .conan && cd .conan
-conan install .. -s compiler=clang -s compiler.version=4.0 \
-    -s compiler.libcxx=libstdc++11 --build=missing
-```
-
-__note__
->I've found Conan not to work terribly well inside virtualenvs - but
-if you can make it work there, that'd be the preferred way.
-
-After the dependencies are built, you can see information about them using `conan info ..`
-(the commands above assume that `clang` is configured on the `PATH` and that you have
-version 3.6 installed).
-
-See also `CMakeLists.txt` for the changes necessary to add Conan's builds to the targets.
-
-We use the following packages in this project:
-
-- [cryptopp 5.6.3](http://www.conan.io/source/cryptopp/5.6.3/riebl/testing)
-- [glog 0.3.4](http://www.conan.io/source/glog/0.3.4/dwerner/testing)
-- [gtest 1.8.0](http://www.conan.io/source/gtest/1.8.0/lasote/stable)
-- [ZMQ 4.1.5](http://www.conan.io/source/libzmq/4.1.5/memsharded/stable)
-- [OpenSSL 1.0.2j](http://www.conan.io/source/OpenSSL/1.0.2j/lasote/stable)
-- [Protobuf 2.6.1](http://www.conan.io/source/Protobuf/2.6.1/memsharded/testing)
-
-See [conan.io](http://conan.io) for more information.
-
-### Google Protocol Buffers
-
-The [SWIM gossip protocol implementation](#swim_gossip_and_consensus_algorithm) makes use of
-Protobuf as the serialization protocol to exchange status messages between servers.
-
-The code in this project has been tested using
-[Protocol Buffers 2.6.1](https://github.com/google/protobuf/releases/tag/v2.6.1),
-installed via the [Conan's memshared package](https://conan.io/source/Protobuf/2.6.1/memsharded/testing).
-
-### HTTP Server
-
-To serve the REST API, we use [libmicrohttpd](https://www.gnu.org/software/libmicrohttpd/), "a small C library that is supposed to make it easy to run an HTTP server as part of another application."
-
-This can be either installed directly as a package under most Linux distributions (for example, on Ubuntu, `sudo apt-get install libmicrohttpd-dev` will do the needful), or can be built from source:
-
-```
-wget http://open-source-box.org/libmicrohttpd/libmicrohttpd-0.9.55.tar.gz
-tar xfz libmicrohttpd-0.9.55.tar.gz
-cd libmicrohttpd-0.9.55/
-./configure --prefix ${INSTALL}/libmicrohttpd
-make && make install
-```
-
-The include file anhttps://www.gnu.org/software/libmicrohttpd/tutorial.htmld libraries will be, respectively, in `${INSTALL}/libmicrohttpd/include` and `lib` folders.
-
-See [the tutorial](https://www.gnu.org/software/libmicrohttpd/tutorial.html) for more information about usage.
-
-
-## Build & testing
-
-To build the project, it is the usual `cmake` routine:
-
-    $ mkdir build && cd build
-    $ cmake -DINSTALL_DIR=${INSTALL_DIR} \
-            -DCMAKE_CXX_COMPILER=/usr/local/bin/clang++ \
-            -DCOMMON_UTILS_DIR=/path/to/commons.cmake ..
-    $ cmake --build .
-
-Finally, to run the tests:
-
-    $ ./tests/bin/distlib_test
-
-or to simply run a subset of the tests with full debug logging:
-
-    $ GLOG_v=2 ./tests/bin/distlib_test --gtest_filter=SwimServer*
-
-See also the other binaries in the `build/bin` folder for more options.
-
-# Projects
-
-## API Documentations
-
-All the classes are documented using [Doxygen](https://massenz.github.io/distlib/).
-
-## Consistent Hashing
-
-See the [Consistent Hash paper](http://www.cs.princeton.edu/courses/archive/fall07/cos518/papers/chash.pdf)
-for more details.
-
-The code implementation here is a simple example of how to implement a set of `buckets` so that
-nodes in a distributed systems could use the consistent hashing algorithm to allow nodes to
-join/leave the ring, without causing massive reshuffles of the partitioned data.
-
-A `View` is then a collection of `Buckets`, which define how the unity circle is divided, via the
-`consistent_hashing()` method and every partitioned item is allocated to a (named) `Bucket`: see
-the [tests](tests/test_view.cpp) for an example of adding/removing buckets and how this only
-causes a fraction of the items to be re-shuffled.
-
-
-## Merkle Trees
-
-See [this post](https://codetrips.com/2016/06/19/implementing-a-merkle-tree-in-c/) for more details.
-
-## SWIM Gossip and Consensus algorithm
+[Build and test](#build_and_test) instructions for the impatient are further below.
 
 ### PING demo server
 
-This is based on [ZeroMQ C++ bindings](http://api.zeromq.org/2-1:zmq-cpp) and is an example
-implementation using the `SwimServer` class.
+This is based on [ZeroMQ C++ bindings](http://api.zeromq.org/2-1:zmq-cpp) and is an example implementation using the `SwimServer` class.
 
 The same binary can act both as one continuously listening on a given
 `port` or as a client sending a one-off status update to a `destination` TCP socket.
 
-See the [Install & Build](#install_and_build) section above to build the `swim_server_demo` target,
-then start the listening server:
-```
+See the [Install & Build](#install_and_build) section to build the `swim_server_demo` target, then start the listening server:
+
+```bash
 ./build/bin/swim_server_demo receive --port=3003
 ```
 
-and it will be listening for incoming [`SwimStatus`](proto/swim.proto) messages on port
-`3003`; a client can then send a message updates for five seconds using:
+and it will be listening for incoming [`SwimStatus`](proto/swim.proto) messages on port `3003`; a client can then send a message updates for five seconds using:
 
-```
+```bash
 ./build/bin/swim_server_demo send --host=tcp://localhost:3003 --duration=5
 ```
+
 (obviously, change the hostname if you are running the two on separate machines/VMs/containers).
 
 Use the `--help` option to see the full list of available options.
 
-### Full-fledged SWIM Detector implementation
 
-A reference implementatio of a failure detector based on the [SWIM Gossip protocol](SWIM) is provided in
-the [`gossip_example`](src/examples/gossip_example.cpp) demo.
+## Full-fledged SWIM Detector implementation
+
 
 Again, use:
 
     $ ./build/bin/gossip_detector_example -h
 
-to see all the available options; [`bin/run_example`](bin/run_example) will start three detectors
-in background and will connect each other to demonstrate how they can detect failures (you can
-keep killing and restarting them, and see how the reports change).
+to see all the available options; [`bin/run_example`](bin/run_example) will start three detectors in background and will connect each other to demonstrate how they can detect failures (you can keep killing and restarting them, and see how the reports change).
 
-Below is a short description of how this works, full details of the protocol in the
-[references](#references).
+Below is a short description of how this works, full details of the protocol in the [references](#references).
 
 ### Server states
 
 ![States Diagram](docs/images/distlib-states.png)
 
-After startup, a `SwimServer` can `ping()` one or more of the servers that have been named
-as `seeds` (perhaps, as a CLI `--seeds` arguments, or named in a config file) and will be
-inserted into the list of `Alive` peers; afterwards, other peers will learn of this server's
-`Alive` state via the Gossip protocol, as this is `reported` to them as being `Alive`.
+After startup, a `SwimServer` can `ping()` one or more of the servers that have been named as `seeds` (perhaps, as a CLI `--seeds` arguments, or named in a config file) and will be inserted into the list of `Alive` peers; afterwards, other peers will learn of this server's `Alive` state via the Gossip protocol, as this is `reported` to them as being `Alive`.
 
-Subsequently, at regular intervals (but randomly, from the list of `Alive` servers) successful
-`ping()` requests will keep this server in the pool of peers' lists of `Alive` peers.
+Subsequently, at regular intervals (but randomly, from the list of `Alive` servers) successful `ping()` requests will keep this server in the pool of peers' lists of `Alive` peers.
 
-If one of the pings fails, or the server is reported by one of the peers to be `Suspected`, it
-will be placed in the appropriate list and, after a (configurable) timeout lapses, it will be
-considered as `Terminated` and removed from the list.
+If one of the pings fails, or the server is reported by one of the peers to be `Suspected`, it will be placed in the appropriate list and, after a (configurable) timeout lapses, it will be considered as `Terminated` and removed from the list.
 
-Once in the `Suspected` list, a server is never pinged again from the detector; however, it
-may come back `Alive` under one of these conditions (and __before__ the timeout expires):
+Once in the `Suspected` list, a server is never pinged again from the detector; however, it may come back `Alive` under one of these conditions (and __before__ the timeout expires):
 
 - _indirectly_, when one of the other peers reports it to be `Alive`;
-- _directly_, if the server receives a `ping()` request from the `Suspected` server
-  which arrives __after__ a similar `ping()` request from this server had failed
-  (and caused the other server to be `Suspected`);
-- _mediated_, when a third server reports a successful response to a `forward ping()` request
-  that this server had requested, with the `Suspected` server as the object.
+- _directly_, if the server receives a `ping()` request from the `Suspected` server which arrives __after__ a similar `ping()` request from this server had failed (and caused the other server to be `Suspected`);
+- _mediated_, when a third server reports a successful response to a `forward ping()` request that this server had requested, with the `Suspected` server as the object.
 
-When the (configurable) timeout expires, the `Suspected` server is simply removed from the list
-and assumed to be __terminated__ (both the `Started` and `terminated` states are only "logical",
-no list is kept, or no special meaning is associated to them).
+When the (configurable) timeout expires, the `Suspected` server is simply removed from the list and assumed to be __terminated__ (both the `Started` and `terminated` states are only "logical", no list is kept, or no special meaning is associated to them).
 
-In particular, we do not gossip about servers that have been determined to be in either state,
-and we will assume that each of the peers will take care of removing suspected servers from their
-lists once the timeout (which is not necessarily the same for the entire pool - or even constant
-over time for a given server) expires.
+In particular, we do not gossip about servers that have been determined to be in either state, and we will assume that each of the peers will take care of removing suspected servers from their lists once the timeout (which is not necessarily the same for the entire pool - or even constant over time for a given server) expires.
 
 In the example below, `1` knows about `2` directly; and `2` knows about `7` indirectly (when it receives a `Report` from `5`, who learned in turn from `6`); `1` "suspects" `3` (either due to a transient network failure; or because `3` timed out, possibly due to a temporary load), but then confirms that it is indeed "alive" by asking `4` to forward a ping, and the latter successfully contacts `3`, reporting back to `1`.
 
@@ -213,6 +90,91 @@ time.
 
 `TODO: this has not been addressed for now`
 
+
+# Install & Build
+
+## Conan packages
+
+This project is built using CMake and relies on [Conan](https://conan.io) to manage the binary dependencies (shared libraries): these are listed in `conanfile.text`.
+
+In order to build the libraries with Conan, a `default` profile will have to be defined (typically, in `~/.conan/profiles/default`); something like this:
+
+```
+[settings]
+build_type=Release
+
+os=Macos
+os_build=Macos
+arch=x86_64
+arch_build=x86_64
+
+compiler=clang
+compiler.version=11.0
+compiler.libcxx=libc++
+```
+
+
+
+adjust those values to match your system's configuration.
+
+**NOTE** this project has been built and tested using `clang++` (and the `bin/build` scripts assumes that too); if you prefer using `gcc++` YMMV.
+
+
+See also `CMakeLists.txt` for the changes necessary to add Conan's builds to the targets.
+
+See [the Conan documentation](https://docs.conan.io/en/latest/) for more information.
+
+## Additional dependencies
+
+The project relies additionally on:
+
+* [`distlib`](libdist) (a library of utilities for distributed systems); 
+* [`SimpleHttpRequests`](https://github.com/massenz/SimpleHttpRequest)[^simplehttpreq] (an HTTP client, only used for integration tests); and
+* [`SimpleApiServer`](https://bitbucket.org/marco/simpleapiserver)
+
+They all rely on `Conan` for managing their respective dependencies, and have automated build scripts: simply `git clone` the respective repositories, run the `build` scripts, making sure that the `$INSTALL_DIR` environment variable is set [^INSTALL_DIR] and it will all "just work."
+
+Shared libraries and headers will be installed, respectively, in `$INSTALL_DIR/lib` and `$INSTALL_DIR/include/{project}`; these are referenced in the `CMakeLists.txt` build descriptor.
+
+
+### Google Protocol Buffers
+
+The [SWIM gossip protocol implementation](#swim_gossip_and_consensus_algorithm) makes use of Protobuf as the serialization protocol to exchange status messages between servers.
+
+The code in this project has been tested using
+[Protocol Buffers 2.6.1](https://github.com/google/protobuf/releases/tag/v2.6.1),
+installed via [Conan's package](https://conan.io/source/Protobuf/2.6.1/memsharded/testing).
+
+
+### HTTP Server
+
+To serve the REST API, we use [libmicrohttpd](https://www.gnu.org/software/libmicrohttpd/), "a small C library that is supposed to make it easy to run an HTTP server as part of another application."
+
+Unfortunately, there is no Conan recipe to build and install it, so this needs to be done manually.
+
+This can be either installed directly as a package under most Linux distributions (for example, on Ubuntu, `sudo apt-get install libmicrohttpd-dev` will do the needful), or can be built from source:
+
+```
+wget http://open-source-box.org/libmicrohttpd/libmicrohttpd-0.9.55.tar.gz
+tar xfz libmicrohttpd-0.9.55.tar.gz
+cd libmicrohttpd-0.9.55/
+./configure --prefix ${INSTALL_DIR}/libmicrohttpd
+make && make install
+```
+
+The include file and libraries will be, respectively, in `${INSTALL_DIR}/libmicrohttpd/include` and `lib` folders.
+
+See [the tutorial](https://www.gnu.org/software/libmicrohttpd/tutorial.html) for more information about usage.
+
+
+## Build & testing
+
+To build the project use the `bin/build` script, and to run the tests `bin/test`.
+
+## API Documentations
+
+All the classes are documented using [Doxygen]() and are generated by running `doxygen`; HTML documentation will be generated in `docs/apidocs`.
+
 ---
 
 # References
@@ -220,8 +182,15 @@ time.
  * [SWIM: Scalable Weakly-consistent Infection-style Process Group Membership Protocol](SWIM)
  * [Unreliable Distributed Failure Detectors for Reliable Systems](detectors)
  * [A Gossip-Style Failure Detection Service](gossip)
+ * [libdist - C++ utilities for Distributed Computing](libdist)
 
 
 [SWIM]: https://www.cs.cornell.edu/projects/Quicksilver/public_pdfs/SWIM.pdf
 [detectors]: https://goo.gl/6yuh9T
 [gossip]: https://goo.gl/rxAIa6
+[libdist]: https://bitbucket.org/marco/distlib
+
+# Footnotes
+
+[^simplehttpreq]: Use the forked version on `massenz/simp
+[^INSTALL_DIR]: This is the base directory for both looking up shared libraries and header files, and where the build targets will be installed to: if it's not defined the build will fail.

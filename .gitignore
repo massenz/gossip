@@ -18,9 +18,10 @@ Makefile
 cmake_install.cmake
 gen/
 
-# Recommended build directory
+# Build directory
 build/
 Debug/
+cmake-build-debug/
 
 # Compiler intermediate files
 .o

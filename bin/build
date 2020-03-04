@@ -14,8 +14,7 @@ BUILD_DIR="${BASEDIR}/build"
 mkdir -p ${BUILD_DIR}
 cd ${BUILD_DIR}
 
-conan install ${BASEDIR} -if=${BUILD_DIR} -pr=default --build=missing \
-    -s compiler=clang -s compiler.version=11.0 -s compiler.libcxx=libc++
+conan install ${BASEDIR} -if=${BUILD_DIR} -pr=default --build=missing
 
 if [[ -d ${COMMON_UTILS_DIR} ]]; then
   UTILS="-DCOMMON_UTILS_DIR=${COMMON_UTILS_DIR}"
