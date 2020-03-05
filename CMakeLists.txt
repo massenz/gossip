@@ -8,7 +8,7 @@ cmake_policy(SET CMP0068 NEW)
 # Version number
 set(RELEASE_MAJOR 1)
 set(RELEASE_MINOR 0)
-set(RELEASE_PATCH 1)
+set(RELEASE_PATCH 2)
 
 
 # Include common cmake utilities:

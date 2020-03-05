@@ -9,17 +9,6 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14 -fPIC")
 include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
 conan_basic_setup()
 
-###
-# Third Party libraries
-set(THIRD_PARTY ${CMAKE_SOURCE_DIR}/third_party)
-set(SIMPLE_HTTP ${THIRD_PARTY}/SimpleHttpRequest)
-
-include_directories(
-        ${SIMPLE_HTTP}/include
-        ${SIMPLE_HTTP}/include/uv
-)
-link_directories(${SIMPLE_HTTP}/lib)
-
 
 find_library(GTEST gtest ${INSTALL_DIR}/lib)
 if (${GTEST} STREQUAL GTEST-NOTFOUND)

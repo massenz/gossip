@@ -13,24 +13,20 @@ namespace swim {
 
 void SwimServer::start() {
 
-  VLOG(2) << "VLOG 1";
-  LOG(INFO) << "1";
+  VLOG(2) << "Starting SwimServer...";
   context_t ctx(kNumThreads);
   socket_t socket(ctx, ZMQ_REP);
   if (!socket) {
     LOG(ERROR) << "Could not initialize the socket, this is a critical error, aborting.";
     return;
   }
-  LOG(INFO) << "2";
+  VLOG(2) << "TCP Socket created and initialized";
 
   // No point in keeping the socket around when we exit.
   socket.setsockopt(ZMQ_LINGER, &kDefaultSocketLingerMsec, sizeof (unsigned int));
-  LOG(INFO) << "3";
 
   auto address = utils::SocketAddress(port_);
-  VLOG(2) << "Binding Socket to: " << address << ":" << port_;
-
-  LOG(INFO) << "Server listening on: " << address;
+  LOG(INFO) << "Server listening on: " << address << "(port: " << port_ << ")";
   socket.bind(address.c_str());
 
 
