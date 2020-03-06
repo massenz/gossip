@@ -36,8 +36,17 @@ void SwimServer::start() {
       {socket, 0, ZMQ_POLLIN, 0}
   };
   stopped_ = false;
+  VLOG(2) << "Entering listening loop (polling every: " << polling_interval_ << " msec)";
   while (!stopped_) {
     int rc = zmq_poll(items, 1, polling_interval_);
+
+    // Due to the time we spent waiting for a message incoming (at most `polling_interval_` msecs)
+    // `stopped_` may have become true and the server may be shutting down.
+    // [See #171674111]
+    if (stopped_) {
+      VLOG(2) << "The server was stopped and is in the process of shutting down, discarding message";
+      break;
+    }
     if (rc > 0 && items[0].revents && ZMQ_POLLIN) {
       message_t msg;
       if (!socket.recv(&msg)) {

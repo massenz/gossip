@@ -1,4 +1,4 @@
-# This file (c) 2016-2017 AlertAvert.com.  All rights reserved.
+# This file (c) 2016-2020 AlertAvert.com.  All rights reserved.
 
 project(gossip)
 cmake_minimum_required(VERSION 3.15)

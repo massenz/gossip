@@ -1,5 +1,10 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="Integration" type="CMakeGoogleTestRunConfigurationType" factoryName="Google Test" PASS_PARENT_ENVS_2="true" PROJECT_NAME="gossip" TARGET_NAME="integration_tests" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="gossip" RUN_TARGET_NAME="integration_tests" TEST_CLASS="IntegrationTests" TEST_MODE="SUITE_TEST">
+  <configuration default="false" name="Integration" type="CMakeGoogleTestRunConfigurationType" factoryName="Google Test" WORKING_DIR="file://$PROJECT_DIR$" PASS_PARENT_ENVS_2="true" PROJECT_NAME="gossip" TARGET_NAME="integration_tests" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="gossip" RUN_TARGET_NAME="integration_tests" TEST_CLASS="IntegrationTests" TEST_MODE="SUITE_TEST">
+    <envs>
+      <env name="GLOG_logtostderr" value="true" />
+      <env name="GLOG_v" value="2" />
+      <env name="DYLD_LIBRARY_PATH" value="build/lib:$USER_HOME$/local/lib" />
+    </envs>
     <method v="2">
       <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       <option name="BeforeTestRunTask" enabled="true" />

@@ -178,10 +178,18 @@ TEST_F(IntegrationTests, canStopThreads) {
   EXPECT_TRUE(server().alive_empty());
 }
 
-
+// TODO: this is more of a test for ApiServer, should be moved to that project.
+// TODO: move setup of ApiServer endpoints and handling to test fixture.
 TEST_F(IntegrationTests, wrongApiServerEndpointReturnsNotFound) {
   std::shared_ptr<api::rest::ApiServer> server =
       std::make_shared<api::rest::ApiServer>(7999);
+
+  server->AddGet("test", [] (const api::rest::Request& request) {
+    auto response = api::rest::Response::ok();
+    response.set_body("OK");
+    return response;
+  });
+  server->Start();
 
   try {
     request::SimpleHttpRequest simpleClient;
@@ -211,10 +219,20 @@ TEST_F(IntegrationTests, reportsApiServer) {
   }, milliseconds(500)));
   detector->AddNeighbor(neighbor->self());
 
-
   std::shared_ptr<api::rest::ApiServer> server =
       std::make_shared<api::rest::ApiServer>(7999);
   ASSERT_NE(nullptr, server.get());
+
+  server->AddGet("report", [this] (const api::rest::Request& request) {
+    auto response = api::rest::Response::ok();
+    auto report = detector->gossip_server().PrepareReport();
+    std::string json_body;
+
+    ::google::protobuf::util::MessageToJsonString(report, &json_body);
+    response.set_body(json_body);
+    return response;
+  });
+  server->Start();
 
   // Verify that we can get an empty Report.
   request::SimpleHttpRequest simpleClient;
@@ -264,6 +282,27 @@ TEST_F(IntegrationTests, postApiServer) {
   std::shared_ptr<api::rest::ApiServer> server =
       std::make_shared<api::rest::ApiServer>(7999);
 
+  server->AddPost("server", [this](const api::rest::Request &request) {
+    Server neighbor;
+    auto status = ::google::protobuf::util::JsonStringToMessage(request.body(), &neighbor);
+    if (status.ok()) {
+      detector->AddNeighbor(neighbor);
+      LOG(INFO) << "Added server " << neighbor;
+
+      std::string body{"{ \"result\": \"added\", \"server\": "};
+      std::string server;
+      ::google::protobuf::util::MessageToJsonString(neighbor, &server);
+      auto response = api::rest::Response::created();
+      response.set_body(body + server + "}");
+      return response;
+    }
+
+    LOG(ERROR) << "Not valid JSON: " << request.body();
+    return api::rest::Response::bad_request("Not a valid JSON representation of a server: "
+                                                + request.body());
+  });
+  server->Start();
+
   // Verify that we can get an empty Report.
   request::SimpleHttpRequest simpleClient;
   simpleClient.timeout = 2500;
@@ -276,7 +315,6 @@ TEST_F(IntegrationTests, postApiServer) {
                  << err.message;
         }).on("response", [this, &neighbor](request::Response &&res) {
           EXPECT_TRUE(res.good());
-          EXPECT_EQ("OK", res.str());
           EXPECT_EQ(201, res.statusCode);
         }).end();
   } catch (const std::exception &e) {

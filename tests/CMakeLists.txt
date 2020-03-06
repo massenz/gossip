@@ -54,6 +54,7 @@ add_executable(integration_tests
 )
 target_link_libraries(integration_tests
         ${GTEST}
+        apiserver
         gossip
         http_parser
         uv
