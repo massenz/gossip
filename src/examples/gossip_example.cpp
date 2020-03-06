@@ -177,8 +177,8 @@ int main(int argc, const char *argv[]) {
     std::unique_ptr<api::rest::ApiServer> apiServer;
     if (parser.enabled("http")) {
       unsigned int httpPort = parser.getUInt("http-port", ::kDefaultHttpPort);
-      std::cout << "Enabling HTTP REST API: http://"
-                << utils::Hostname() << ":" << httpPort << std::endl;
+      LOG(INFO) << "Enabling HTTP REST API: http://"
+                << utils::Hostname() << ":" << httpPort;
       apiServer = std::make_unique<api::rest::ApiServer>(httpPort);
 
       apiServer->AddGet("report", [&detector] (const api::rest::Request& request) {
@@ -211,8 +211,9 @@ int main(int argc, const char *argv[]) {
         return api::rest::Response::bad_request("Not a valid JSON representation of a server: "
             + request.body());
       });
-
+      LOG(INFO) << "Starting API Server";
       apiServer->Start();
+      LOG(INFO) << ">>>Done";
     } else {
       LOG(INFO) << "REST API will not be available";
     }
