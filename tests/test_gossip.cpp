@@ -92,7 +92,7 @@ TEST_F(GossipFailureDetectorTests, updatesManyAlives) {
 
   ASSERT_TRUE(tests::WaitAtMostFor([&]() -> bool { return detector_->gossip_server().isRunning(); },
                                    std::chrono::milliseconds(2000))) << "Detector didn't start";
-  const SwimServer& server = detector_->gossip_server();
+  auto& server = detector_->gossip_server();
 
   ASSERT_TRUE(server.alive_empty());
   for (int i = 0; i < 10; ++i) {
