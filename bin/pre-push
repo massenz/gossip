@@ -10,10 +10,11 @@
 # $2 -- URL to which the push is being done
 
 set -e
+source $(dirname $0)/env.sh
 
 remote="$1"
 url="$2"
 branch=$(git rev-parse --abbrev-ref HEAD)
 
-./bin/build && ./bin/test
-echo -e "[SUCCESS] Pusing branch ${branch} to remote '${remote}' (${url})"
+${BASEDIR}/bin/build && ${BASEDIR}/bin/test
+echo -e "[SUCCESS] Pushing branch ${branch} to remote '${remote}' (${url})"
