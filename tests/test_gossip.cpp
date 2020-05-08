@@ -156,7 +156,7 @@ TEST_F(GossipFailureDetectorTests, addNeighbors) {
 }
 
 
-TEST_F(GossipFailureDetectorTests, prepareReport) {
+TEST_F(GossipFailureDetectorTests, DISABLED_prepareReport) {
   for (int i = 0; i < 3; ++i) {
     std::string host = "host_" + std::to_string(i) + ".example.com";
     std::shared_ptr<Server> server = MakeServer(host, 4456 + i);

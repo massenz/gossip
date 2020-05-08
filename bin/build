@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -ex
+set -eu
 source $(dirname $0)/env.sh
 
 BUILD=${1:-Debug}
