@@ -10,7 +10,10 @@
 # $2 -- URL to which the push is being done
 
 set -e
-source $(dirname $0)/env.sh
+
+# NOTE: this will be executed from the .git/hooks folder via a symlink.
+source $(dirname $0)/../../bin/env.sh
+BASEDIR="${BASEDIR}/.."
 
 remote="$1"
 url="$2"
