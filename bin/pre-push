@@ -19,5 +19,10 @@ remote="$1"
 url="$2"
 branch=$(git rev-parse --abbrev-ref HEAD)
 
+# Only protect the `develop` branch against rogue pushes
+if [[ ${branch} == 'develop' ]]; then
+    exit
+fi
+
 ${BASEDIR}/bin/build && ${BASEDIR}/bin/test
 echo -e "[SUCCESS] Pushing branch ${branch} to remote '${remote}' (${url})"
