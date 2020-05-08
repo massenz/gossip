@@ -3,10 +3,14 @@
 set -ex
 source $(dirname $0)/env.sh
 
+BUILD=${1:-Debug}
+
 mkdir -p ${BUILDDIR}
 cd ${BUILDDIR}
 
 conan install ${BASEDIR} -if=${BUILDDIR} -pr=default --build=missing
 
-cmake  -DCMAKE_CXX_COMPILER=${CLANG} ${UTILS} ..
+cmake -DCMAKE_CXX_COMPILER=${CLANG} \
+      -DCMAKE_BUILD_TYPE=${BUILD} \
+      ${UTILS} ..
 cmake --build . --target all -- -j 6

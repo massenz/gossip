@@ -34,7 +34,7 @@ TEST(SwimServerProtoTests, allocations) {
   server.SerializeToArray(data, bufSize);
   Server svr2 = parse(data, bufSize);
 
-  delete (data);
+  delete[] (data);
 
   ASSERT_STREQ("fakehost", svr2.hostname().c_str());
   ASSERT_EQ(9999, svr2.port());

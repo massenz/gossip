@@ -45,8 +45,21 @@ include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
 conan_basic_setup()
 
 set(RELEASE_STRING "${RELEASE_MAJOR}.${RELEASE_MINOR}.${RELEASE_PATCH}-${BUILD_ID}")
-message(STATUS "Building Release: ${RELEASE_STRING}")
+message(STATUS "Building Release: ${RELEASE_STRING} (${CMAKE_BUILD_TYPE})")
 
+##
+# Depending on the build type (Debug/Release) Google Logging
+# generates a differently-named library.
+# Both the value of CMAKE_BUILD_TYPE and the `build_type` setting
+# in `~/.conan/profiles/default` need to match.
+#
+if(${CMAKE_BUILD_TYPE} STREQUAL "Debug")
+    set(GLOG glogd)
+    set(PROTOBUF protobufd)
+else()
+    set(GLOG glog)
+    set(PROTOBUF protobuf)
+endif()
 
 set(SOURCE_DIR ${PROJECT_SOURCE_DIR}/src)
 set(INCLUDE_DIR ${PROJECT_SOURCE_DIR}/include)
@@ -102,9 +115,9 @@ set(SWIM_SOURCES
 
 set(SWIM_LIBS
         distutils
-        glog
+        ${GLOG}
         microhttpd
-        protobuf
+        ${PROTOBUF}
         pthread
         zmq
 )
