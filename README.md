@@ -111,6 +111,24 @@ time.
 
 # Install & Build
 
+## Pre-requisites
+
+The scripts in this repository take advantage of shared common utility functions
+in [this common utils repository](https://bitbucket.org/marco/common-utils): clone it
+somewhere, and make `$COMMON_UTILS_DIR` point to it:
+
+```shell script
+git clone git@bitbucket.org:marco/common-utils.git
+export COMMON_UTILS_DIR="$(pwd)/common-utils"
+```
+
+To build/test the project, link to the scripts there:
+
+```shell script
+ln -s ${COMMON_UTILS_DIR}/build.sh build
+ln -s ${COMMON_UTILS_DIR}/test.sh test
+```
+
 ## Conan packages
 
 This project is built using CMake and relies on [Conan](https://conan.io) to manage the binary dependencies 
@@ -203,9 +221,25 @@ The include file and libraries will be, respectively, in `${INSTALL_DIR}/libmicr
 See [the tutorial](https://www.gnu.org/software/libmicrohttpd/tutorial.html) for more information about usage.
 
 
-## Build & testing
+## Build, Test & Install
 
-To build the project use the `bin/build` script, and to run the tests `bin/test`.
+To build the project:
+
+```shell script
+$ export INSTALL_DIR=/some/path
+$ ./bin/build && ./bin/test
+```
+
+or to simply run a subset of the tests with full debug logging:
+
+    $ ./bin/test -v --gtest_filter="Bucket*"     
+
+To install the generated binaries (`.so` or `.dylib` shared libraries) 
+and headers so that other projects can find them:
+
+    $ cd build && make install
+
+See the scripts in the `${COMMON_UTILS_DIR}` folder for more options.
 
 ## API Documentations
 

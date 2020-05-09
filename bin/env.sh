@@ -26,7 +26,7 @@ else
     exit 1
 fi
 
-if [[ -d ${COMMON_UTILS_DIR} ]]; then
+if [[ -d ${COMMON_UTILS_DIR:-} ]]; then
   UTILS="-DCOMMON_UTILS_DIR=${COMMON_UTILS_DIR}"
 fi
 
