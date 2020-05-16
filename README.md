@@ -5,8 +5,8 @@ Project   | gossip
 :---      | ---:
 Author    | [M. Massenzio](https://bitbucket.org/marco)
 Repository| <https://bitbucket.org/marco/gossip>
-Release   | 1.0.2
-Updated   | 2020-05-07
+Release   | 1.0.3
+Updated   | 2020-05-16
 
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 

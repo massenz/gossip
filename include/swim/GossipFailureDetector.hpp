@@ -103,9 +103,9 @@ public:
    * @param grace_period the time, in seconds, we will wait for a suspected server to come back
    * @param ping_timeout_msec the time, in milliseconds, we will wait for the ping response
    */
-  GossipFailureDetector(unsigned short port,
-                        const long interval,
-                        const long grace_period,
+  explicit GossipFailureDetector(unsigned short port = kDefaultPort,
+                        const long interval = kDefaultPollingIntervalMsec,
+                        const long grace_period = kDefaultGracePeriodSec,
                         const long ping_timeout_msec = kDefaultTimeoutMsec) :
       update_round_interval_(interval),
       grace_period_(grace_period),

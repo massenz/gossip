@@ -21,6 +21,15 @@ namespace swim {
 
 ////  Mark: Constants
 
+/** Default TCP port for Gossip Protocol */
+const unsigned int kDefaultPort = 30395;
+
+/** Default Grace period the Gossip detector waits before declaring a `suspect` host to be `dead` */
+const unsigned int kDefaultGracePeriodSec = 35;
+
+/** Default interval between pings to neighbors */
+const unsigned int kDefaultPingIntervalSec = 5;
+
 /** Default timeout for all clients connecting to servers */
 const unsigned long kDefaultTimeoutMsec = 25;
 

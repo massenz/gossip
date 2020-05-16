@@ -8,7 +8,7 @@ cmake_policy(SET CMP0068 NEW)
 # Version number
 set(RELEASE_MAJOR 1)
 set(RELEASE_MINOR 0)
-set(RELEASE_PATCH 2)
+set(RELEASE_PATCH 3)
 
 
 # Include common cmake utilities:
@@ -77,17 +77,13 @@ configure_file(
 #
 find_package(Protobuf REQUIRED)
 
-IF(${PROTOBUF_FOUND})
+if(${PROTOBUF_FOUND})
     PROTOBUF_GENERATE_CPP(PROTO_SRCS PROTO_HDRS ${PROTO_DIR}/swim.proto)
-    message(STATUS "When generated, Protocol Buffer files will be in:\n"
-        "\tHeaders: ${PROTO_HDRS}\n\tSources: ${PROTO_SRCS}\n"
-        "protoc: ${PROTOBUF_PROTOC_EXECUTABLE}\n"
-        "protoc lib: ${PROTOBUF_PROTOC_LIBRARY}\n"
-        "protobuf lib: ${PROTOBUF_LIBRARY}"
-)
-ELSE(${PROTOBUF_FOUND})
+    message(STATUS "Protocol Buffer headers: ${PROTO_HDRS}, Sources: ${PROTO_SRCS}")
+    message(STATUS "Libraries in: ${PROTOBUF_LIBRARY}")
+else()
     message(FATAL_ERROR "Could not find Google Protocol Buffers libraries")
-ENDIF(${PROTOBUF_FOUND})
+endif()
 
 # libmicrohttpd HTTP Server (https://www.gnu.org/software/libmicrohttpd)
 set(LIBMICROHTTPD_INSTALL ${INSTALL_DIR}/libmicrohttpd)
@@ -96,7 +92,7 @@ include_directories(
         ${INCLUDE_DIR}
         ${PROJECT_BINARY_DIR}
         ${CMAKE_BINARY_DIR}
-        ${PROTOBUF_INCLUDE_DIRS}
+        ${Protobuf_INCLUDE_DIRS}
         ${PROTO_HDRS}
         ${LIBMICROHTTPD_INSTALL}/include
         ${INSTALL_DIR}/include
