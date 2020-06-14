@@ -4,7 +4,6 @@
 
 #include <chrono>
 #include <iostream>
-#include <iomanip>
 #include <thread>
 
 #include <glog/logging.h>
@@ -105,7 +104,7 @@ int main(int argc, const char *argv[]) {
   FLAGS_logtostderr = true;
 
   ::utils::ParseArgs parser(argv, argc);
-  if (parser.enabled("debug")) {
+  if (parser.Enabled("debug")) {
     FLAGS_v = 2;
   }
 
@@ -119,7 +118,7 @@ int main(int argc, const char *argv[]) {
     return EXIT_SUCCESS;
   }
 
-  int port = parser.getInt("port", 6060);
+  int port = parser.GetInt("port", 6060);
   if (port < 0 || port > 65535) {
     LOG(ERROR) << "Port number must be a positive integer, less than 65,535. "
                << "Found: " << port;
@@ -140,11 +139,11 @@ int main(int argc, const char *argv[]) {
       return EXIT_FAILURE;
     }
 
-    std::string name = parser.get("name", "client");
+    std::string name = parser.Get("name", "client");
 
     runClient(host, port, name,
-              static_cast<unsigned long>(parser.getInt("timeout", 200)),
-              static_cast<unsigned long>(parser.getInt("duration", 5)));
+              static_cast<unsigned long>(parser.GetInt("timeout", 200)),
+              static_cast<unsigned long>(parser.GetInt("duration", 5)));
 
   } else if (action == "receive") {
     SwimServer server(port);

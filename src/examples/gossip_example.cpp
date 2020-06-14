@@ -6,7 +6,7 @@
 #include <chrono>
 #include <iostream>
 #include <memory>
-#include <signal.h>
+#include <csignal>
 #include <thread>
 
 #include <glog/logging.h>
@@ -93,9 +93,9 @@ int main(int argc, const char *argv[]) {
   google::InitGoogleLogging(argv[0]);
 
   ::utils::ParseArgs parser(argv, argc);
-  if (parser.enabled("debug") || parser.enabled("trace")) {
+  if (parser.Enabled("debug") || parser.Enabled("trace")) {
     FLAGS_logtostderr = true;
-    FLAGS_v = parser.enabled("debug") ? 2 : 3;
+    FLAGS_v = parser.Enabled("debug") ? 2 : 3;
   }
 
   utils::PrintVersion("SWIM Gossip Server Demo", RELEASE_STR);
@@ -109,7 +109,7 @@ int main(int argc, const char *argv[]) {
   }
 
   try {
-    int port = parser.getInt("port", ::kDefaultPort);
+    int port = parser.GetInt("port", ::kDefaultPort);
     if (port < 0 || port > 65535) {
       LOG(ERROR) << "Port number must be a positive integer, less than 65,535. "
                  << "Found: " << port;
@@ -117,9 +117,9 @@ int main(int argc, const char *argv[]) {
     }
     LOG(INFO) << "Gossip Detector listening on incoming TCP port " << port;
 
-    long ping_timeout_msec = parser.getInt("timeout", swim::kDefaultTimeoutMsec);
-    long ping_interval_sec = parser.getInt("ping", swim::kDefaultPingIntervalSec);
-    long grace_period_sec = parser.getInt("grace-period", swim::kDefaultGracePeriodSec);
+    long ping_timeout_msec = parser.GetInt("timeout", swim::kDefaultTimeoutMsec);
+    long ping_interval_sec = parser.GetInt("ping", swim::kDefaultPingIntervalSec);
+    long grace_period_sec = parser.GetInt("grace-period", swim::kDefaultGracePeriodSec);
 
     detector = std::make_shared<GossipFailureDetector>(
         port,
@@ -134,7 +134,7 @@ int main(int argc, const char *argv[]) {
     }
 
 
-    auto seedNames = ::utils::split(parser.get("seeds"));
+    auto seedNames = ::utils::split(parser.Get("seeds"));
     LOG(INFO) << "Connecting to initial Gossip Circle: "
               << ::utils::Vec2Str(seedNames, ", ");
 
@@ -177,7 +177,7 @@ int main(int argc, const char *argv[]) {
 
 
     std::unique_ptr<api::rest::ApiServer> apiServer;
-    if (parser.enabled("http")) {
+    if (parser.Enabled("http")) {
       unsigned int httpPort = parser.getUInt("http-port", ::kDefaultHttpPort);
       LOG(INFO) << "Enabling HTTP REST API: http://"
                 << utils::Hostname() << ":" << httpPort;
@@ -201,7 +201,7 @@ int main(int argc, const char *argv[]) {
           detector->AddNeighbor(neighbor);
           LOG(INFO) << "Added server " << neighbor;
 
-          std::string body{"{ \"result\": \"added\", \"server\": "};
+          std::string body{R"({ "result": "added", "server": )"};
           std::string server;
           ::google::protobuf::util::MessageToJsonString(neighbor, &server);
           auto response = api::rest::Response::created();
