@@ -30,3 +30,4 @@ bin/test
 .o
 .so
 .la
+.DS_Store
