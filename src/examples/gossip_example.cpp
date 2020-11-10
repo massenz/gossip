@@ -204,7 +204,7 @@ int main(int argc, const char *argv[]) {
           std::string body{R"({ "result": "added", "server": )"};
           std::string server;
           ::google::protobuf::util::MessageToJsonString(neighbor, &server);
-          auto response = api::rest::Response::created();
+          auto response = api::rest::Response::created("/server/" + neighbor.hostname());
           response.set_body(body + server + "}");
           return response;
         }
