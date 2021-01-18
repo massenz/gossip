@@ -1,14 +1,17 @@
 # Gossip Protocol for Fault Detectors
 
 
-Project   | gossip
+Project   | [gossip](https://bitbucket.org/marco/gossip)
 :---      | ---:
 Author    | [M. Massenzio](https://bitbucket.org/marco)
-Repository| <https://bitbucket.org/marco/gossip>
-Release   | 1.0.3
+Version   | 1.0.3
 Updated   | 2020-05-16
+Issues    | [Jira](https://kapsules.atlassian.net/secure/RapidBoard.jspa?rapidView=1&projectKey=DIST)
 
+![Version](https://img.shields.io/badge/Version-1.0.3-blue)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+![C++](https://img.shields.io/badge/C++-17-red)
+![OS Linux](https://img.shields.io/badge/OS-Linux,%20MacOS-green)
 
 # SWIM Gossip and Consensus algorithm
 

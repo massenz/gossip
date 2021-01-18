@@ -176,20 +176,27 @@ int main(int argc, const char *argv[]) {
     LOG(INFO) << "Threads started; detector process running"; // TODO: << PID?
 
 
+
     std::unique_ptr<api::rest::ApiServer> apiServer;
     if (parser.Enabled("http")) {
+      if (parser.has("cors")) {
+        LOG(INFO) << "+++++ Enabling CORS for domain(s): " << parser.Get("cors");
+      }
       unsigned int httpPort = parser.getUInt("http-port", ::kDefaultHttpPort);
       LOG(INFO) << "Enabling HTTP REST API: http://"
                 << utils::Hostname() << ":" << httpPort;
       apiServer = std::make_unique<api::rest::ApiServer>(httpPort);
 
-      apiServer->AddGet("report", [] (const api::rest::Request& request) {
+      apiServer->AddGet("report", [&parser] (const api::rest::Request& request) {
         auto response = api::rest::Response::ok();
         auto report = detector->gossip_server().PrepareReport();
         std::string json_body;
 
         ::google::protobuf::util::MessageToJsonString(report, &json_body);
         response.set_body(json_body);
+        if (parser.has("cors")) {
+          response.AddHeader("Access-Control-Allow-Origin", parser.Get("cors"));
+        }
         return response;
       });
 
