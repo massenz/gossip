@@ -34,7 +34,7 @@ enum ReportSelector {
  * to add records to our report, until the total "cost" of doing so exceeds a given budget, given
  * by `kTimeDecayBudget`.
  *
- * @todo we may eventually decide to make both paramets configurable in a later release.
+ * @todo we may eventually decide to make both parameters configurable in a later release.
  *
  * @param t time, in seconds, since the record was last updated
  * @return the associated "cost" of adding the record to the report

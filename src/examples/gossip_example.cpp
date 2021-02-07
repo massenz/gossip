@@ -108,6 +108,8 @@ int main(int argc, const char *argv[]) {
     return EXIT_SUCCESS;
   }
 
+  cout << "PID: " << ::getpid() << endl;
+
   try {
     int port = parser.GetInt("port", ::kDefaultPort);
     if (port < 0 || port > 65535) {

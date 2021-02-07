@@ -3,6 +3,8 @@
 
 #include "swim/GossipFailureDetector.hpp"
 
+#include <memory>
+
 namespace swim {
 
 bool operator<(const ServerRecord& lhs, const ServerRecord& rhs) {
@@ -28,22 +30,22 @@ void GossipFailureDetector::InitAllBackgroundThreads() {
     return;
   }
 
-  threads_.push_back(std::unique_ptr<std::thread>(
-      new std::thread([this]() {
+  threads_.push_back(std::make_unique<std::thread>(
+      [this]() {
         while (gossip_server().isRunning()) {
           SendReport();
           std::this_thread::sleep_for(update_round_interval_);
         }
-      }))
+      })
   );
 
-  threads_.push_back(std::unique_ptr<std::thread>(
-      new std::thread([this]() {
+  threads_.push_back(std::make_unique<std::thread>(
+      [this]() {
         while (gossip_server().isRunning()) {
           GarbageCollectSuspected();
           std::this_thread::sleep_for(update_round_interval_);
         }
-      }))
+      })
   );
 
   LOG(INFO) << "All Gossiping threads for the SWIM Detector started";
@@ -77,7 +79,7 @@ void GossipFailureDetector::SendReport() const {
   VLOG(2) << "Sending report, alive: " << report.alive_size() << "; suspected: "
           << report.suspected_size();
 
-  for (auto other : GetUniqueNeighbors(num_reports_)) {
+  for (const auto& other : GetUniqueNeighbors(num_reports_)) {
     auto client = SwimClient(other, gossip_server_->port());
     VLOG(2) << "Sending report to " << other;
 
@@ -86,7 +88,7 @@ void GossipFailureDetector::SendReport() const {
       LOG(WARNING) << "Report sending failed; adding " << other << " to suspects";
       gossip_server_->ReportSuspected(other);
       auto forwards = GetUniqueNeighbors(num_forwards_);
-      for (auto fwd : forwards) {
+      for (const auto& fwd : forwards) {
         VLOG(2) << "Requesting " << fwd << " to ping " << other << " on our behalf";
         client = SwimClient(fwd, gossip_server_->port());
 
