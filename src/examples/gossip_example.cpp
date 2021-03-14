@@ -108,6 +108,7 @@ int main(int argc, const char *argv[]) {
     return EXIT_SUCCESS;
   }
 
+  // TODO: remove after demo
   cout << "PID: " << ::getpid() << endl;
 
   try {
@@ -117,7 +118,8 @@ int main(int argc, const char *argv[]) {
                  << "Found: " << port;
       return EXIT_FAILURE;
     }
-    LOG(INFO) << "Gossip Detector listening on incoming TCP port " << port;
+    LOG(INFO) << "Gossip Detector (PID: " << ::getpid()
+              << ") listening on incoming TCP port " << port;
 
     long ping_timeout_msec = parser.GetInt("timeout", swim::kDefaultTimeoutMsec);
     long ping_interval_sec = parser.GetInt("ping", swim::kDefaultPingIntervalSec);
